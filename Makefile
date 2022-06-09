@@ -1,5 +1,5 @@
 all:
-	rm -rf  *~ */*~ apps/config/src/*.beam apps/sd/src/*~ test/*.beam erl_cra*;
+	rm -rf  *~ */*~ apps/config/src/*.beam apps/config/src/*~ test/*.beam erl_cra*;
 	rm -rf  logs *.service_dir rebar.lock;
 	rm -rf _build test_ebin ebin *_info_specs;
 	mkdir ebin;		
