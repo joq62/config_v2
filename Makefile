@@ -15,6 +15,12 @@ eunit:
 	rm -rf _build logs log *.service_dir *_info_specs;
 	rm -rf rebar.lock;
 	rm -rf ebin test_ebin;
+	mkdir  application_info_specs;
+	cp ../../specifications/application_info_specs/*.spec application_info_specs;
+	mkdir  host_info_specs;
+	cp ../../specifications/host_info_specs/*.host host_info_specs;
+	mkdir deployment_info_specs;
+	cp ../../specifications/deployment_info_specs/*.depl deployment_info_specs;
 	rebar3 compile;
 	mkdir test_ebin;
 	mkdir ebin;

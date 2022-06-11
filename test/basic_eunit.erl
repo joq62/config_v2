@@ -25,11 +25,100 @@
 start()->
     ok=config_server:appl_start([]),
     pong=config_server:ping(),
-
-
+    ok=application_test(),
+    ok=deployment_test(),
+    ok=host_test(),
     init:stop(),
     ok.
 
+
+%% --------------------------------------------------------------------
+%% Function:start/0 
+%% Description: Initiate the eunit tests, set upp needed processes etc
+%% Returns: non
+%% -------------------------------------------------------------------
+application_test()->
+    
+    ["nodelog.spec","web_c100.spec",
+     "sd.spec","common.spec",
+     "config.spec","web_conbee_c201.spec"]=config_server:application_all_filenames(),
+    ["application_info_specs/nodelog.spec",
+     "application_info_specs/web_c100.spec",
+     "application_info_specs/sd.spec",
+     "application_info_specs/common.spec",
+     "application_info_specs/config.spec",
+     "application_info_specs/web_conbee_c201.spec"]=config_server:application_all_files(),
+    
+    [[{name,"nodelog"},{vsn,["0.1.0"]},{gitpath,"https://github.com/joq62/nodelog.git"},{cmd,{nodelog_server,appl_start,[[]]}}],
+     [{name,"web_c100"},{vsn,["0.1.0"]},{gitpath,"https://github.com/joq62/web_c100.git"},{cmd,{web_c100_server,appl_start,[[]]}}],
+     [{name,"sd"},{vsn,["1.0.0"]},{gitpath,"https://github.com/joq62/sd.git"},{cmd,{sd_server,appl_start,[[]]}}],
+     [{name,"common"},{vsn,["0.1.0"]},{gitpath,"https://github.com/joq62/common.git"},{cmd,{common_server,appl_start,[[]]}}],
+     [{name,"config"},{vsn,["1.0.1"]},{gitpath,"https://github.com/joq62/config.git"},{cmd,{config_server,appl_start,[[]]}}],
+     [{name,"web_conbee_c201"},{vsn,["0.1.0"]},{gitpath,"https://github.com/joq62/web_conbee_c201.git"},{cmd,{web_c201_server,appl_start,[[]]}}]]=config_server:application_all_info(),
+
+    %% test one 
+    ["0.1.0"]=config_server:application_vsn("nodelog.spec"),
+    "https://github.com/joq62/nodelog.git"=config_server:application_gitpath("nodelog.spec"),
+    {nodelog_server,appl_start,[[]]}=config_server:application_start_cmd("nodelog.spec"),
+
+    %% negative test
+    {error,[eexists,"glurk.spec"]}=config_server:application_vsn("glurk.spec"),
+    {error,[eexists,"nodelog.glurk"]}=config_server:application_gitpath("nodelog.glurk"),
+    {error,[eexists,34]}=config_server:application_start_cmd(34),
+    ok.
+
+%% --------------------------------------------------------------------
+%% Function:start/0 
+%% Description: Initiate the eunit tests, set upp needed processes etc
+%% Returns: non
+%% -------------------------------------------------------------------
+deployment_test()->
+    ["controller_local.depl"]=config_server:deployment_all_filenames(),
+    ["deployment_info_specs/controller_local.depl"]=config_server:deployment_all_files(),
+    [[{api_version,"1.0.0"},
+      {kind,deployment},
+      {name,"controller_local"},
+      {vsn,"0.1.0"},
+      {appl_specs,[{"common","0.1.0"},
+		   {"nodelog","0.1.0"},
+		   {"config","0.1.0"},
+		   {"sd","0.1.0"}]},
+      {num_instances,3},
+      {directive,[{all_or_nothing,false},{same_host,true},{specifict_host,[]}]}]]=config_server:deployment_all_info(),
+
+    [{"common","0.1.0"},
+     {"nodelog","0.1.0"},
+     {"config","0.1.0"},
+     {"sd","0.1.0"}]=config_server:deployment_appl_specs("controller_local.depl"),
+    3=config_server:deployment_num_instances("controller_local.depl"),
+    [{all_or_nothing,false},
+     {same_host,true},
+     {specifict_host,[]}]=config_server:deployment_directive("controller_local.depl"),
+
+    ok.
+
+%% --------------------------------------------------------------------
+%% Function:start/0 
+%% Description: Initiate the eunit tests, set upp needed processes etc
+%% Returns: non
+%% -------------------------------------------------------------------
+host_test()->
+    ["c202.host","c200.host","c201.host","c100.host"]=config_server:host_all_filenames(),
+    ["host_info_specs/c202.host",
+     "host_info_specs/c200.host",
+     "host_info_specs/c201.host",
+     "host_info_specs/c100.host"]=config_server:host_all_files(),
+    [[{hostname,"c202"},{local_ip,"192.168.1.202"},{public_ip,_},{ssl_port,__},
+      {uid,_},{passwd,_},{application_config,_}]|_]=config_server:host_all_info(),    
+
+    io:format("local_ip, ~p~n",[config_server:host_local_ip("c202")]),
+    io:format("public_ip, ~p~n",[config_server:host_public_ip("c202")]),
+    io:format("ssl_port, ~p~n",[config_server:host_ssl_port("c202")]),
+    io:format("uid, ~p~n",[config_server:host_uid("c202")]), 
+    io:format("passwd, ~p~n",[config_server:host_passwd("c202")]),
+    io:format("application_config, ~p~n",[config_server:host_application_config("c202")]),
+
+    ok.
 
 %% --------------------------------------------------------------------
 %% Function:start/0 

@@ -31,6 +31,7 @@
 %% Definitions 
 %% --------------------------------------------------------------------
 
+
 %% --------------------------------------------------------------------
 %% Function: available_hosts()
 %% Description: Based on hosts.config file checks which hosts are avaible
@@ -38,28 +39,34 @@
 %% --------------------------------------------------------------------
 
 -export([ %application_info_specs
-	  application_id_all/0,
+
+	  application_all_files/0,
+	  application_all_filenames/0,
+	  application_all_info/0,
 	  application_vsn/1,
 	  application_gitpath/1,
+	  application_start_cmd/1,
 	  application_member/1,
 	  application_member/2,
 	 %% host_info_specs
-	  host_id_all/0,
+	  host_all_files/0,
+	  host_all_filenames/0,
+	  host_all_info/0,
+
 	  host_local_ip/1,
 	  host_public_ip/1,
 	  host_ssl_port/1,
 	  host_uid/1,
 	  host_passwd/1,
-	  host_controller_node/1,
-	  host_cookie/1,
 	  host_application_config/1,
 	 %% deployment_info_specs
-	  deployment_appl_to_deploy/1,
-	  deployment_id_all/0,
-	  deployment_vsn/1,
-	  deployment_app_id/1,
-	  deployment_app_vsns/1,
-	  deployment_controller_nodes/1
+	  deployment_all_files/0,
+	  deployment_all_filenames/0,
+	  deployment_all_info/0,
+	  deployment_appl_specs/1,
+	  deployment_num_instances/1,
+	  deployment_directive/1
+
 	]).
 
 -export([
@@ -87,20 +94,31 @@ stop()-> gen_server:call(?SERVER, {stop},infinity).
 
 
 %% application_info_specs
-application_id_all()->
-    gen_server:call(?SERVER, {application_id_all},infinity).
+application_all_filenames()->
+    gen_server:call(?SERVER, {application_all_filenames},infinity).
+application_all_files()->
+    gen_server:call(?SERVER, {application_all_files},infinity).
+application_all_info()->
+    gen_server:call(?SERVER, {application_all_info},infinity).
 application_vsn(AppId)->
     gen_server:call(?SERVER, {application_vsn,AppId},infinity).
 application_gitpath(AppId)->
     gen_server:call(?SERVER, {application_gitpath,AppId},infinity).
+application_start_cmd(AppId)->
+    gen_server:call(?SERVER, {application_start_cmd,AppId},infinity).
 application_member(AppId)->
     gen_server:call(?SERVER, {application_member,AppId},infinity).
 application_member(AppId,Vsn)->
     gen_server:call(?SERVER, {application_member,AppId,Vsn},infinity).
 
 %% host_info_specs
-host_id_all()->
-    gen_server:call(?SERVER, {host_id_all},infinity).
+host_all_filenames()->
+    gen_server:call(?SERVER, {host_all_filenames},infinity).
+host_all_files()->
+    gen_server:call(?SERVER, {host_all_files},infinity).
+host_all_info()->
+    gen_server:call(?SERVER, {host_all_info},infinity).
+
 host_local_ip(HostName)->
     gen_server:call(?SERVER, {host_local_ip,HostName},infinity).
 host_public_ip(HostName)->
@@ -111,26 +129,24 @@ host_uid(HostName)->
     gen_server:call(?SERVER, {host_uid,HostName},infinity).
 host_passwd(HostName)->
     gen_server:call(?SERVER, {host_passwd,HostName},infinity).
-host_controller_node(HostName)->
-    gen_server:call(?SERVER, {host_controller_node,HostName},infinity).
-host_cookie(HostName)->
-    gen_server:call(?SERVER, {host_cookie,HostName},infinity).
 host_application_config(HostName)->
      gen_server:call(?SERVER, {host_application_config,HostName},infinity).
 
 %% deployment_info_specs
-deployment_id_all()->
-    gen_server:call(?SERVER, {deployment_id_all},infinity).
-deployment_vsn(DeplId)->
-    gen_server:call(?SERVER, {deployment_vsn,DeplId},infinity).
-deployment_app_id(DeplId)->
-    gen_server:call(?SERVER, {deployment_app_id,DeplId},infinity).
-deployment_app_vsns(DeplId)->
-    gen_server:call(?SERVER, {deployment_app_vsns,DeplId},infinity).
-deployment_controller_nodes(DeplId)->
-    gen_server:call(?SERVER, {deployment_controller_nodes,DeplId},infinity).
-deployment_appl_to_deploy(Controller)->
-    gen_server:call(?SERVER, {deployment_appl_to_deploy,Controller},infinity).
+deployment_all_filenames()->
+    gen_server:call(?SERVER, {deployment_all_filenames},infinity).
+deployment_all_files()->
+    gen_server:call(?SERVER, {deployment_all_files},infinity).
+deployment_all_info()->
+    gen_server:call(?SERVER, {deployment_all_info},infinity).
+
+
+deployment_appl_specs(FileName)->
+    gen_server:call(?SERVER, {deployment_appl_specs,FileName},infinity).
+deployment_num_instances(FileName)->
+    gen_server:call(?SERVER, {deployment_num_instances,FileName},infinity).
+deployment_directive(FileName)->
+    gen_server:call(?SERVER, {deployment_directive,FileName},infinity).
 
 
 %%---------------------------------------------------------------
@@ -158,7 +174,7 @@ ping()->
 %
 %% --------------------------------------------------------------------
 init([]) ->
- 
+    
     {ok, #state{}}.
     
 %% --------------------------------------------------------------------
@@ -173,89 +189,99 @@ init([]) ->
 %% --------------------------------------------------------------------
 
 %%----------------- deployment_info_specs
-
-handle_call({deployment_appl_to_deploy,Controller},_From,State) ->
-    Reply=deployment:appl_to_deploy(Controller),
+handle_call({deployment_all_filenames},_From,State) ->
+    Reply=deployment_lib:all_filenames(),
     {reply, Reply, State};
 
-handle_call({deployment_id_all},_From,State) ->
-    Reply=deployment:id_all(),
+handle_call({deployment_all_files},_From,State) ->
+    Reply=deployment_lib:all_files(),
     {reply, Reply, State};
 
-handle_call({deployment_vsn,DeplId},_From,State) ->
-    Reply=deployment:vsn(DeplId),
+handle_call({deployment_all_info},_From,State) ->
+    Reply=deployment_lib:all_info(),
     {reply, Reply, State};
 
-handle_call({deployment_app_id,DeplId},_From,State) ->
-    Reply=deployment:app_id(DeplId),
+handle_call({deployment_appl_specs,FileName},_From,State) ->
+    Reply=deployment_lib:get(appl_specs,FileName),
     {reply, Reply, State};
 
-handle_call({deployment_app_vsns,DeplId},_From,State) ->
-    Reply=deployment:app_vsns(DeplId),
+handle_call({deployment_num_instances,FileName},_From,State) ->
+    Reply=deployment_lib:get(num_instances,FileName),
     {reply, Reply, State};
 
-handle_call({deployment_controller_nodes,DeplId},_From,State) ->
-    Reply=deployment:controller_nodes(DeplId),
+handle_call({deployment_directive,FileName},_From,State) ->
+    Reply=deployment_lib:get(directive,FileName),
     {reply, Reply, State};
-
 
 %%----------------- application_info_specs
-handle_call({application_id_all},_From,State) ->
-    Reply=apps:id_all(),
+handle_call({application_all_filenames},_From,State) ->
+    Reply=appl_lib:all_filenames(),
     {reply, Reply, State};
 
+handle_call({application_all_files},_From,State) ->
+    Reply=appl_lib:all_files(),
+    {reply, Reply, State};
+
+handle_call({application_all_info},_From,State) ->
+    Reply=appl_lib:all_info(),
+    {reply, Reply, State};
+
+
 handle_call({application_vsn,AppId},_From,State) ->
-    Reply=apps:vsn(AppId),
+    Reply=appl_lib:get(vsn,AppId),
     {reply, Reply, State};
 
 handle_call({application_gitpath,AppId},_From,State) ->
-    Reply=apps:gitpath(AppId),
+    Reply=appl_lib:get(gitpath,AppId),
+    {reply, Reply, State};
+
+handle_call({application_start_cmd,AppId},_From,State) ->
+    Reply=appl_lib:get(cmd,AppId),
     {reply, Reply, State};
 
 handle_call({application_member,AppId},_From,State) ->
-    Reply=apps:member(AppId),
+    Reply=appl_lib:member(AppId),
     {reply, Reply, State};
 
 handle_call({application_member,AppId,Vsn},_From,State) ->
-    Reply=apps:member(AppId,Vsn),
+    Reply=appl_lib:member(AppId,Vsn),
     {reply, Reply, State};
 
 %%--------------- host_info_specs
+handle_call({host_all_filenames},_From,State) ->
+    Reply=host_lib:all_filenames(),
+    {reply, Reply, State};
 
-handle_call({host_id_all},_From,State) ->
-    Reply=host:id_all(),
+handle_call({host_all_files},_From,State) ->
+    Reply=host_lib:all_files(),
+    {reply, Reply, State};
+
+handle_call({host_all_info},_From,State) ->
+    Reply=host_lib:all_info(),
     {reply, Reply, State};
 
 handle_call({host_local_ip,HostName},_From,State) ->
-    Reply=host:local_ip(HostName),
+    Reply=host_lib:get(local_ip,HostName),
     {reply, Reply, State};
 
 handle_call({host_public_ip,HostName},_From,State) ->
-    Reply=host:public_ip(HostName),
+    Reply=host_lib:get(public_ip,HostName),
     {reply, Reply, State};
 
 handle_call({host_ssl_port,HostName},_From,State) ->
-    Reply=host:ssl_port(HostName),
+    Reply=host_lib:get(ssl_port,HostName),
     {reply, Reply, State};
 
 handle_call({host_uid,HostName},_From,State) ->
-    Reply=host:uid(HostName),
+    Reply=host_lib:get(uid,HostName),
     {reply, Reply, State};
 
 handle_call({host_passwd,HostName},_From,State) ->
-    Reply=host:passwd(HostName),
-    {reply, Reply, State};
-
-handle_call({host_controller_node,HostName},_From,State) ->
-    Reply=host:controller_node(HostName),
-    {reply, Reply, State};
-
-handle_call({host_cookie,HostName},_From,State) ->
-    Reply=host:cookie(HostName),
+    Reply=host_lib:get(passwd,HostName),
     {reply, Reply, State};
 
 handle_call({host_application_config,HostName},_From,State) ->
-    Reply=host:application_config(HostName),
+    Reply=host_lib:get(application_config,HostName),
     {reply, Reply, State};
 
 handle_call({ping},_From,State) ->
