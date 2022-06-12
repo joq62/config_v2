@@ -55,7 +55,7 @@
 
 	  host_local_ip/1,
 	  host_public_ip/1,
-	  host_ssl_port/1,
+	  host_ssh_port/1,
 	  host_uid/1,
 	  host_passwd/1,
 	  host_application_config/1,
@@ -123,8 +123,8 @@ host_local_ip(HostName)->
     gen_server:call(?SERVER, {host_local_ip,HostName},infinity).
 host_public_ip(HostName)->
     gen_server:call(?SERVER, {host_public_ip,HostName},infinity).
-host_ssl_port(HostName)->
-    gen_server:call(?SERVER, {host_ssl_port,HostName},infinity).
+host_ssh_port(HostName)->
+    gen_server:call(?SERVER, {host_ssh_port,HostName},infinity).
 host_uid(HostName)->
     gen_server:call(?SERVER, {host_uid,HostName},infinity).
 host_passwd(HostName)->
@@ -268,8 +268,8 @@ handle_call({host_public_ip,HostName},_From,State) ->
     Reply=host_lib:get(public_ip,HostName),
     {reply, Reply, State};
 
-handle_call({host_ssl_port,HostName},_From,State) ->
-    Reply=host_lib:get(ssl_port,HostName),
+handle_call({host_ssh_port,HostName},_From,State) ->
+    Reply=host_lib:get(ssh_port,HostName),
     {reply, Reply, State};
 
 handle_call({host_uid,HostName},_From,State) ->
