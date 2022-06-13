@@ -93,19 +93,26 @@ deployment_test()->
 deployment_spec_test()->
     ["cluster1.depl_spec"|_]=config_server:deployment_spec_all_filenames(),
     ["deployments/cluster1.depl_spec"|_]=config_server:deployment_spec_all_files(),
-    [[{name,"cluster1"},
-      {controllers,3},
-      {workers,5},
-      {cookie,"cluster1_cookie"},
-      {hosts,["c100","c202"]},
-      {deployments,["calculator.depl"]}]|_]=config_server:deployment_spec_all_info(),
+    [[{name,"cluster1"},{controllers,3},{workers,5},
+     {cookie,"cluster1_cookie"},{hosts,["c100","c202"]},
+     {application_info_specs,[{dir,"cluster1/application_info_specs"},{gitpath,"https://github.com/joq62/application_info_specs.git"}]},
+     {deployment_info_specs,[{dir,"cluster1/deployment_info_specs"},{gitpath,"https://github.com/joq62/deployment_info_specs.git"}]},{host_info_specs,[{dir,"host_info_specs"},{gitpath,"https://github.com/joq62/host_info_specs.git"}]},
+     {deployments,["calculator.depl"]}]|_]=config_server:deployment_spec_all_info(),
 
     "cluster1"=config_server:deployment_spec_name("cluster1.depl_spec"),
     3=config_server:deployment_spec_controllers("cluster1.depl_spec"),
     5=config_server:deployment_spec_workers("cluster1.depl_spec"),
     "cluster1_cookie"=config_server:deployment_spec_cookie("cluster1.depl_spec"),
     ["c100","c202"]=config_server:deployment_spec_hosts("cluster1.depl_spec"),
-    ["calculator.depl"]=config_server:deployment_spec_deployments("cluster1.depl_spec"),
+
+    [{dir,"cluster1/application_info_specs"},
+     {gitpath,"https://github.com/joq62/application_info_specs.git"}]=config_server:deployment_spec_application_info_dir_git("cluster1.depl_spec"),
+    [{dir,"cluster1/deployment_info_specs"},
+     {gitpath,"https://github.com/joq62/deployment_info_specs.git"}]=config_server:deployment_spec_deployment_info_dir_git("cluster1.depl_spec"),
+    [{dir,"host_info_specs"},
+     {gitpath,"https://github.com/joq62/host_info_specs.git"}]=config_server:deployment_spec_host_info_dir_git("cluster1.depl_spec"),
+   
+ ["calculator.depl"]=config_server:deployment_spec_deployments("cluster1.depl_spec"),
    
 
     ok.

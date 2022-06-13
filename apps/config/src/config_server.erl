@@ -69,6 +69,9 @@
 	  deployment_spec_workers/1,
 	  deployment_spec_cookie/1,
 	  deployment_spec_hosts/1,
+	  deployment_spec_application_info_dir_git/1,
+	  deployment_spec_deployment_info_dir_git/1,
+	  deployment_spec_host_info_dir_git/1,
 	  deployment_spec_deployments/1,
 
 	
@@ -163,6 +166,13 @@ deployment_spec_cookie(FileName)->
 deployment_spec_hosts(FileName)->
     gen_server:call(?SERVER, {deployment_spec_hosts,FileName},infinity).
 
+deployment_spec_application_info_dir_git(FileName)->
+    gen_server:call(?SERVER, {deployment_spec_application_info_dir_git,FileName},infinity).
+deployment_spec_deployment_info_dir_git(FileName)->
+    gen_server:call(?SERVER, {deployment_spec_deployment_info_dir_git,FileName},infinity).
+deployment_spec_host_info_dir_git(FileName)->
+    gen_server:call(?SERVER, {deployment_spec_host_info_dir_git,FileName},infinity).
+
 deployment_spec_deployments(FileName)->
     gen_server:call(?SERVER, {deployment_spec_deployments,FileName},infinity).
 
@@ -251,6 +261,17 @@ handle_call({deployment_spec_cookie,FileName},_From,State) ->
 handle_call({deployment_spec_hosts,FileName},_From,State) ->
     Reply=deployment_spec_lib:get(hosts,FileName),
     {reply, Reply, State};
+
+handle_call({deployment_spec_application_info_dir_git,FileName},_From,State) ->
+    Reply=deployment_spec_lib:get(application_info_specs,FileName),
+    {reply, Reply, State};
+handle_call({deployment_spec_deployment_info_dir_git,FileName},_From,State) ->
+    Reply=deployment_spec_lib:get(deployment_info_specs,FileName),
+    {reply, Reply, State};
+handle_call({deployment_spec_host_info_dir_git,FileName},_From,State) ->
+    Reply=deployment_spec_lib:get(host_info_specs,FileName),
+    {reply, Reply, State};
+
 handle_call({deployment_spec_deployments,FileName},_From,State) ->
     Reply=deployment_spec_lib:get(deployments,FileName),
     {reply, Reply, State};
