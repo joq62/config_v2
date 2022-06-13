@@ -59,6 +59,19 @@
 	  host_uid/1,
 	  host_passwd/1,
 	  host_application_config/1,
+	  
+	  %% deployment_specs
+	  deployment_spec_all_files/0,
+	  deployment_spec_all_filenames/0,
+	  deployment_spec_all_info/0,
+	  deployment_spec_name/1,
+	  deployment_spec_controllers/1,
+	  deployment_spec_workers/1,
+	  deployment_spec_cookie/1,
+	  deployment_spec_hosts/1,
+	  deployment_spec_deployments/1,
+
+	
 	 %% deployment_info_specs
 	  deployment_all_files/0,
 	  deployment_all_filenames/0,
@@ -132,6 +145,28 @@ host_passwd(HostName)->
 host_application_config(HostName)->
      gen_server:call(?SERVER, {host_application_config,HostName},infinity).
 
+%% deployment_specs
+deployment_spec_all_filenames()->
+    gen_server:call(?SERVER, {deployment_spec_all_filenames},infinity).
+deployment_spec_all_files()->
+    gen_server:call(?SERVER, {deployment_spec_all_files},infinity).
+deployment_spec_all_info()->
+    gen_server:call(?SERVER, {deployment_spec_all_info},infinity).
+deployment_spec_name(FileName)->
+    gen_server:call(?SERVER, {deployment_spec_name,FileName},infinity).
+deployment_spec_controllers(FileName)->
+    gen_server:call(?SERVER, {deployment_spec_controllers,FileName},infinity).
+deployment_spec_workers(FileName)->
+    gen_server:call(?SERVER, {deployment_spec_workers,FileName},infinity).
+deployment_spec_cookie(FileName)->
+    gen_server:call(?SERVER, {deployment_spec_cookie,FileName},infinity).
+deployment_spec_hosts(FileName)->
+    gen_server:call(?SERVER, {deployment_spec_hosts,FileName},infinity).
+
+deployment_spec_deployments(FileName)->
+    gen_server:call(?SERVER, {deployment_spec_deployments,FileName},infinity).
+
+
 %% deployment_info_specs
 deployment_all_filenames()->
     gen_server:call(?SERVER, {deployment_all_filenames},infinity).
@@ -187,6 +222,39 @@ init([]) ->
 %%          {stop, Reason, Reply, State}   | (terminate/2 is called)
 %%          {stop, Reason, State}            (aterminate/2 is called)
 %% --------------------------------------------------------------------
+%% deployment_specs
+handle_call({deployment_spec_all_filenames},_From,State) ->
+    Reply=deployment_spec_lib:all_filenames(),
+    {reply, Reply, State};
+
+handle_call({deployment_spec_all_files},_From,State) ->
+    Reply=deployment_spec_lib:all_files(),
+    {reply, Reply, State};
+
+handle_call({deployment_spec_all_info},_From,State) ->
+    Reply=deployment_spec_lib:all_info(),
+    {reply, Reply, State};
+
+
+handle_call({deployment_spec_name,FileName},_From,State) ->
+    Reply=deployment_spec_lib:get(name,FileName),
+    {reply, Reply, State};
+handle_call({deployment_spec_controllers,FileName},_From,State) ->
+    Reply=deployment_spec_lib:get(controllers,FileName),
+    {reply, Reply, State};
+handle_call({deployment_spec_workers,FileName},_From,State) ->
+    Reply=deployment_spec_lib:get(workers,FileName),
+    {reply, Reply, State};
+handle_call({deployment_spec_cookie,FileName},_From,State) ->
+    Reply=deployment_spec_lib:get(cookie,FileName),
+    {reply, Reply, State};
+handle_call({deployment_spec_hosts,FileName},_From,State) ->
+    Reply=deployment_spec_lib:get(hosts,FileName),
+    {reply, Reply, State};
+handle_call({deployment_spec_deployments,FileName},_From,State) ->
+    Reply=deployment_spec_lib:get(deployments,FileName),
+    {reply, Reply, State};
+
 
 %%----------------- deployment_info_specs
 handle_call({deployment_all_filenames},_From,State) ->

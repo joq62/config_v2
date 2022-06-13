@@ -1,7 +1,7 @@
 all:
 	rm -rf  *~ */*~ apps/config/src/*.beam apps/config/src/*~ test/*.beam erl_cra*;
 	rm -rf  logs *.service_dir rebar.lock;
-	rm -rf _build test_ebin ebin *_info_specs;
+	rm -rf _build test_ebin ebin deployments *_info_specs;
 	mkdir ebin;		
 	rebar3 compile;	
 	cp _build/default/lib/*/ebin/* ebin;
@@ -12,7 +12,7 @@ check:
 
 eunit:
 	rm -rf  *~ */*~ apps/config/src/*.beam test/*.beam test_ebin erl_cra*;
-	rm -rf _build logs log *.service_dir *_info_specs;
+	rm -rf _build logs log *.service_dir deployments *_info_specs;
 	rm -rf rebar.lock;
 	rm -rf ebin test_ebin;
 	mkdir  application_info_specs;
@@ -21,6 +21,8 @@ eunit:
 	cp ../../specifications/host_info_specs/*.host host_info_specs;
 	mkdir deployment_info_specs;
 	cp ../../specifications/deployment_info_specs/*.depl deployment_info_specs;
+	mkdir deployments;
+	cp ../../specifications/deployments/*.depl_spec deployments;
 	rebar3 compile;
 	mkdir test_ebin;
 	mkdir ebin;

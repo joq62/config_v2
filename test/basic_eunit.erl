@@ -27,6 +27,7 @@ start()->
     pong=config_server:ping(),
     ok=application_test(),
     ok=deployment_test(),
+    ok=deployment_spec_test(),
     ok=host_test(),
     init:stop(),
     ok.
@@ -82,6 +83,30 @@ deployment_test()->
     [{all_or_nothing,false},
      {same_host,true},
      {specifict_host,[]}]=config_server:deployment_directive("controller_local.depl"),
+
+    ok.
+%% --------------------------------------------------------------------
+%% Function:start/0 
+%% Description: Initiate the eunit tests, set upp needed processes etc
+%% Returns: non
+%% -------------------------------------------------------------------
+deployment_spec_test()->
+    ["cluster1.depl_spec"|_]=config_server:deployment_spec_all_filenames(),
+    ["deployments/cluster1.depl_spec"|_]=config_server:deployment_spec_all_files(),
+    [[{name,"cluster1"},
+      {controllers,3},
+      {workers,5},
+      {cookie,"cluster1_cookie"},
+      {hosts,["c100","c202"]},
+      {deployments,["calculator.depl"]}]|_]=config_server:deployment_spec_all_info(),
+
+    "cluster1"=config_server:deployment_spec_name("cluster1.depl_spec"),
+    3=config_server:deployment_spec_controllers("cluster1.depl_spec"),
+    5=config_server:deployment_spec_workers("cluster1.depl_spec"),
+    "cluster1_cookie"=config_server:deployment_spec_cookie("cluster1.depl_spec"),
+    ["c100","c202"]=config_server:deployment_spec_hosts("cluster1.depl_spec"),
+    ["calculator.depl"]=config_server:deployment_spec_deployments("cluster1.depl_spec"),
+   
 
     ok.
 
