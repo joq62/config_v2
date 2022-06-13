@@ -24,15 +24,23 @@
 %% Returns: List({HostId,Ip,SshPort,Uid,Pwd}
 %% --------------------------------------------------------------------
 all_filenames()->
- %   {ok,Files}=file:list_dir(?DirSpecs),
-    InfoSpecDir=code:where_is_file(?DirSpecs),
-    {ok,Files}=file:list_dir(InfoSpecDir),
-    [Filename||Filename<-Files,
-	       ".depl"=:=filename:extension(Filename)].
+    case code:where_is_file(?DirSpecs) of
+	non_existing->
+	    {error,[non_existing,?DirSpecs]};
+	InfoSpecDir->
+	    {ok,Files}=file:list_dir(InfoSpecDir),
+	    [Filename||Filename<-Files,
+		       ".depl"=:=filename:extension(Filename)]
+    end.
+   
 
 all_files()->    
-    InfoSpecDir=code:where_is_file(?DirSpecs),
-    [filename:join([InfoSpecDir,Filename])||Filename<-all_filenames()].
+    case code:where_is_file(?DirSpecs) of
+	non_existing->
+	    {error,[non_existing,?DirSpecs]};
+	InfoSpecDir->
+	    [filename:join([InfoSpecDir,Filename])||Filename<-all_filenames()]
+    end.
 
 all_info()->
     L1=[file:consult(DeplFile)||DeplFile<-all_files()],
