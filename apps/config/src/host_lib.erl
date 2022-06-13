@@ -23,12 +23,13 @@
 %% Returns: List({HostId,Ip,SshPort,Uid,Pwd}
 %% --------------------------------------------------------------------
 all_filenames()->
-    {ok,Files}=file:list_dir(?DirSpecs),
+    InfoSpecDir=code:where_is_file(?DirSpecs),
+    {ok,Files}=file:list_dir(InfoSpecDir),
     [Filename||Filename<-Files,
 	       ".host"=:=filename:extension(Filename)].
 
 all_files()->
-    [filename:join(?DirSpecs,Filename)||Filename<-all_filenames()].
+    [Filename||Filename<-all_filenames()].
 
 all_info()->
     L1=[file:consult(DeplFile)||DeplFile<-all_files()],

@@ -24,7 +24,8 @@
 %% Returns: List({HostId,Ip,SshPort,Uid,Pwd}
 %% --------------------------------------------------------------------
 all_filenames()->
-    {ok,Files}=file:list_dir(?DirSpecs),
+    InfoSpecDir=code:where_is_file(?DirSpecs),
+    {ok,Files}=file:list_dir(InfoSpecDir),
     [Filename||Filename<-Files,
 	       ".depl_spec"=:=filename:extension(Filename)].
 

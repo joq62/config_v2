@@ -28,4 +28,4 @@ eunit:
 	mkdir ebin;
 	cp _build/default/lib/*/ebin/* ebin;
 	erlc -o test_ebin test/*.erl;
-	erl -pa ebin -pa test_ebin -sname config -run basic_eunit start -setcookie cookie_test
+	erl -pa * -pa ebin -pa test_ebin -sname config -run basic_eunit start -setcookie cookie_test

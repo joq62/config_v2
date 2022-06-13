@@ -160,8 +160,9 @@ application_config(HostId)->
 %% Returns: List({HostId,Ip,SshPort,Uid,Pwd}
 %% --------------------------------------------------------------------
 all_files()->
-    {ok,Files}=file:list_dir(?DirSpecs),
-    DeplFiles=[filename:join(?DirSpecs,Filename)||Filename<-Files,
+    InfoSpecDir=code:where_is_file(?DirSpecs),
+    {ok,Files}=file:list_dir(InfoSpecDir),
+    DeplFiles=[Filename||Filename<-Files,
 							    ".host"=:=filename:extension(Filename)],
     DeplFiles.    
 all_info()->
