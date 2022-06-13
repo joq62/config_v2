@@ -41,7 +41,7 @@ start()->
 application_test()->
     
     ["nodelog.spec"|_]=config_server:application_all_filenames(),
-    ["application_info_specs/nodelog.spec"|_]=config_server:application_all_files(),
+    ["cluster1/application_info_specs/nodelog.spec"|_]=config_server:application_all_files(),
     
     [[{name,"nodelog"},{vsn,["0.1.0"]},{gitpath,"https://github.com/joq62/nodelog.git"},{cmd,{nodelog_server,appl_start,[[]]}}]|_]=config_server:application_all_info(),
 
@@ -63,7 +63,7 @@ application_test()->
 %% -------------------------------------------------------------------
 deployment_test()->
     ["calculator.depl"|_]=config_server:deployment_all_filenames(),
-    ["deployment_info_specs/calculator.depl"|_]=config_server:deployment_all_files(),
+    ["cluster1/deployment_info_specs/calculator.depl"|_]=config_server:deployment_all_files(),
     [[{api_version,"1.0.0"},
       {kind,deployment},
       {name,"calculator"},
@@ -92,7 +92,7 @@ deployment_test()->
 %% -------------------------------------------------------------------
 deployment_spec_test()->
     ["cluster1.depl_spec"|_]=config_server:deployment_spec_all_filenames(),
-    ["deployments/cluster1.depl_spec"|_]=config_server:deployment_spec_all_files(),
+    ["cluster1/deployments/cluster1.depl_spec"|_]=config_server:deployment_spec_all_files(),
     [[{name,"cluster1"},{controllers,3},{workers,5},
      {cookie,"cluster1_cookie"},{hosts,["c100","c202"]},
      {application_info_specs,[{dir,"cluster1/application_info_specs"},{gitpath,"https://github.com/joq62/application_info_specs.git"}]},
@@ -124,10 +124,7 @@ deployment_spec_test()->
 %% -------------------------------------------------------------------
 host_test()->
     ["c202.host","c200.host","c201.host","c100.host"]=config_server:host_all_filenames(),
-    ["host_info_specs/c202.host",
-     "host_info_specs/c200.host",
-     "host_info_specs/c201.host",
-     "host_info_specs/c100.host"]=config_server:host_all_files(),
+    ["cluster1/host_info_specs/c202.host"|_]=config_server:host_all_files(),
     [[{hostname,"c202"},{local_ip,"192.168.1.202"},{public_ip,_},{ssh_port,__},
       {uid,_},{passwd,_},{application_config,_}]|_]=config_server:host_all_info(),    
 

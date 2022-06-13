@@ -1,0 +1,9 @@
+{name,"cluster1"}.
+{controllers,3}.
+{workers,5}.
+{cookie,"cluster1_cookie"}.
+{hosts,["c100","c202"]}.
+{application_info_specs,[{dir,"cluster1/application_info_specs"},{gitpath,"https://github.com/joq62/application_info_specs.git"}]}.
+{deployment_info_specs,[{dir,"cluster1/deployment_info_specs"},{gitpath,"https://github.com/joq62/deployment_info_specs.git"}]}.
+{host_info_specs,[{dir,"host_info_specs"},{gitpath,"https://github.com/joq62/host_info_specs.git"}]}.
+{deployments,["calculator.depl"]}.

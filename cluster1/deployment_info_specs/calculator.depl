@@ -1,0 +1,15 @@
+{api_version, "1.0.0"}.
+{kind, deployment}.
+{name,"calculator"}.
+{vsn,"0.1.0"}.
+{appl_specs,[{"test_math","0.1.0"},
+	     {"test_add","0.1.0"},
+	     {"test_divi","0.1.0"},
+	     {"test_sub","0.1.0"}]}.
+{num_instances,3}.
+{directive,[{all_or_nothing,false},{same_host,false},{specifict_host,[]}]}.
+		    
+		    	      
+		    
+
+		  

@@ -30,7 +30,8 @@ all_filenames()->
 	       ".depl_spec"=:=filename:extension(Filename)].
 
 all_files()->
-    [filename:join(?DirSpecs,Filename)||Filename<-all_filenames()].
+    InfoSpecDir=code:where_is_file(?DirSpecs),
+    [filename:join([InfoSpecDir,Filename])||Filename<-all_filenames()].
 
 all_info()->
     L1=[file:consult(DeplFile)||DeplFile<-all_files()],
