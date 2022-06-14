@@ -52,6 +52,7 @@
 	  host_all_files/0,
 	  host_all_filenames/0,
 	  host_all_info/0,
+	  host_all_hostnames/0,
 
 	  host_local_ip/1,
 	  host_public_ip/1,
@@ -134,6 +135,8 @@ host_all_files()->
     gen_server:call(?SERVER, {host_all_files},infinity).
 host_all_info()->
     gen_server:call(?SERVER, {host_all_info},infinity).
+host_all_hostnames()->
+    gen_server:call(?SERVER, {host_all_hostnames},infinity).
 
 host_local_ip(HostName)->
     gen_server:call(?SERVER, {host_local_ip,HostName},infinity).
@@ -347,6 +350,10 @@ handle_call({host_all_files},_From,State) ->
 
 handle_call({host_all_info},_From,State) ->
     Reply=host_lib:all_info(),
+    {reply, Reply, State};
+
+handle_call({host_all_hostnames},_From,State) ->
+    Reply=host_lib:all_hostnames(),
     {reply, Reply, State};
 
 handle_call({host_local_ip,HostName},_From,State) ->

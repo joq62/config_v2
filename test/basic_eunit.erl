@@ -126,7 +126,8 @@ host_test()->
     ["c202.host","c200.host","c201.host","c100.host"]=config_server:host_all_filenames(),
     ["cluster1/host_info_specs/c202.host"|_]=config_server:host_all_files(),
     [[{hostname,"c202"},{local_ip,"192.168.1.202"},{public_ip,_},{ssh_port,__},
-      {uid,_},{passwd,_},{application_config,_}]|_]=config_server:host_all_info(),    
+      {uid,_},{passwd,_},{application_config,_}]|_]=config_server:host_all_info(),   
+    ["c202"|_]=config_server:host_all_hostnames(),
 
     io:format("local_ip, ~p~n",[config_server:host_local_ip("c202")]),
     io:format("public_ip, ~p~n",[config_server:host_public_ip("c202")]),

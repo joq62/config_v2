@@ -5,6 +5,7 @@
 	 all_filenames/0,
 	 all_files/0,
 	 all_info/0,
+	 all_hostnames/0,
 
 	 get_info/1
 	]).
@@ -43,6 +44,9 @@ all_info()->
     L1=[file:consult(DeplFile)||DeplFile<-all_files()],
 %    io:format(" L1 ~p~n",[L1]),
     [Info||{ok,Info}<-L1].
+
+all_hostnames()->
+    [proplists:get_value(hostname,Info)||Info<-all_info()].
 
 %% --------------------------------------------------------------------
 %% Function: available_hosts()

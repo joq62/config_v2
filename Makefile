@@ -1,6 +1,7 @@
 all:
 	rm -rf  *~ */*~ apps/config/src/*.beam apps/config/src/*~ test/*.beam erl_cra*;
 	rm -rf  logs *.service_dir rebar.lock;
+	rm -rf cluster1;
 	rm -rf _build test_ebin ebin deployments *_info_specs;
 	mkdir ebin;		
 	rebar3 compile;	
