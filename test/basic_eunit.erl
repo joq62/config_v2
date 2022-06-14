@@ -64,16 +64,18 @@ application_test()->
 deployment_test()->
     ["calculator.depl"|_]=config_server:deployment_all_filenames(),
     ["cluster1/deployment_info_specs/calculator.depl"|_]=config_server:deployment_all_files(),
-    [[{api_version,"1.0.0"},
-      {kind,deployment},
-      {name,"calculator"},
-      {vsn,"0.1.0"},
-      {appl_specs,[{"test_math","0.1.0"},
-		   {"test_add","0.1.0"},
-		   {"test_divi","0.1.0"},
-		   {"test_sub","0.1.0"}]},
-      {num_instances,3},
-      {directive,[{all_or_nothing,false},{same_host,false},{specifict_host,[]}]}]|_]=config_server:deployment_all_info(),
+    [[{name,"calculator"},
+     {vsn,"0.1.0"},
+     {appl_specs,[{"test_math","0.1.0"},
+		  {"test_add","0.1.0"},
+		  {"test_divi","0.1.0"},
+		  {"test_sub","0.1.0"}]},
+     {num_instances,3},
+     {directive,[{all_or_nothing,false},{same_host,false},{specifict_host,[]}]}]|_]=config_server:deployment_all_info(),
+
+    
+    "calculator"=config_server:deployment_name("calculator.depl"),
+    "0.1.0"=config_server:deployment_vsn("calculator.depl"),
 
     [{"common","0.1.0"},
      {"nodelog","0.1.0"},

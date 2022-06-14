@@ -80,6 +80,9 @@
 	  deployment_all_files/0,
 	  deployment_all_filenames/0,
 	  deployment_all_info/0,
+
+	  deployment_name/1,
+	  deployment_vsn/1,
 	  deployment_appl_specs/1,
 	  deployment_num_instances/1,
 	  deployment_directive/1
@@ -189,6 +192,10 @@ deployment_all_info()->
     gen_server:call(?SERVER, {deployment_all_info},infinity).
 
 
+deployment_name(FileName)->
+    gen_server:call(?SERVER, {deployment_name,FileName},infinity).
+deployment_vsn(FileName)->
+    gen_server:call(?SERVER, {deployment_vsn,FileName},infinity).
 deployment_appl_specs(FileName)->
     gen_server:call(?SERVER, {deployment_appl_specs,FileName},infinity).
 deployment_num_instances(FileName)->
@@ -291,6 +298,14 @@ handle_call({deployment_all_files},_From,State) ->
 
 handle_call({deployment_all_info},_From,State) ->
     Reply=deployment_lib:all_info(),
+    {reply, Reply, State};
+
+handle_call({deployment_name,FileName},_From,State) ->
+    Reply=deployment_lib:get(name,FileName),
+    {reply, Reply, State};
+
+handle_call({deployment_vsn,FileName},_From,State) ->
+    Reply=deployment_lib:get(vsn,FileName),
     {reply, Reply, State};
 
 handle_call({deployment_appl_specs,FileName},_From,State) ->
