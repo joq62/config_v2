@@ -15,7 +15,8 @@
 %% External exports
 -export([get_nodenames/0,
 	 get_nodes/0,
-	start_slave/1,
+	 start_slave/1,
+	 start_slave/3,
 	start_nodes/0
 	]). 
 
@@ -35,7 +36,7 @@
 %% Description: Initiate the eunit tests, set upp needed processes etc
 %% Returns: non
 %% --------------------------------------------------------------------
--define(NodeNames,["h200","h201","h202"]).
+-define(NodeNames,["vm0","vm1","vm2"]).
 get_nodenames()->
     ?NodeNames.    
 get_nodes()->
@@ -52,6 +53,12 @@ start_slave(NodeName)->
     rpc:call(Node,init,stop,[]),
     Cookie=atom_to_list(erlang:get_cookie()),
     Args="-pa ebin -setcookie "++Cookie,
+    slave:start(HostId,NodeName,Args).
+
+start_slave(NodeName,Cookie,Args)->
+    HostId=net_adm:localhost(),
+    Node=list_to_atom(NodeName++"@"++HostId),
+    rpc:call(Node,init,stop,[]),
     slave:start(HostId,NodeName,Args).
 
 start_nodes()->

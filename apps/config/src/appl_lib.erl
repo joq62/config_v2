@@ -11,7 +11,7 @@
 
 
 -define(DirSpecs,"application_info_specs").
-
+-define(ApplId(Appl),Appl++".spec").
 
 %% --------------------------------------------------------------------
 %% Function: available_hosts()
@@ -48,7 +48,9 @@ all_info()->
 %% Description: Based on hosts.config file checks which hosts are avaible
 %% Returns: List({HostId,Ip,SshPort,Uid,Pwd}
 %% --------------------------------------------------------------------
-get(Key,DeplFileName)->
+
+get(Key,Appl)->
+    DeplFileName=?ApplId(Appl),
     Reply=case get_info(DeplFileName) of
 	      {error,Reason}->
 		  {error,Reason};
